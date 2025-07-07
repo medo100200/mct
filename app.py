@@ -7,7 +7,8 @@ from werkzeug.security import check_password_hash
 from models import User  # لو عندك موديل User
 import pandas as pd
 from flask import send_file
-from datetime import datetime
+from whatsapp_utils import send_whatsapp_message
+from models import Device
 
 
 
@@ -36,6 +37,51 @@ with app.app_context():
         db.session.commit()
 
 
+
+
+
+@app.before_request
+def check_late_devices():
+    # علشان ميشتغلش على صفحة تسجيل الدخول
+    if request.endpoint == 'login':
+        return
+
+    late_devices = Device.query.filter_by(status="قيد الإصلاح").all()
+
+    for device in late_devices:
+        try:
+            received = datetime.strptime(device.received_date, "%Y-%m-%d")
+            delta = (datetime.now() - received).days
+
+            if delta >= 0 and not device.notes:  # notes هنا بنستخدمها كـ"هل الرسالة اتبعتت؟"
+                message = f"تنبيه! الجهاز رقم {device.serial} للعميل {device.client_name} بقاله {delta} يوم في الصيانة."
+                send_whatsapp_message("201021669849", "2449963", message)
+
+                device.notes = "تم الإرسال"
+                db.session.commit()
+        except Exception as e:
+            print("خطأ في فحص الجهاز:", e)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @app.route('/export')
 def export_devices():
     devices = Device.query.all()
@@ -60,6 +106,15 @@ def export_devices():
     df.to_excel(file_path, index=False)
 
     return send_file(file_path, as_attachment=True)
+
+
+
+
+
+
+
+
+
 
 
 
@@ -215,7 +270,7 @@ def index():
                 try:
                     received = datetime.strptime(device.received_date, "%Y-%m-%d")
                     days = (datetime.now() - received).days
-                    include = days >= 7
+                    include = days >= 0
                 except:
                     include = False
 
@@ -227,7 +282,7 @@ def index():
             try:
                 received = datetime.strptime(device.received_date, "%Y-%m-%d")
                 days = (datetime.now() - received).days
-                if days >= 7:
+                if days >= 0:
                     reminders.append({
                         'client': device.client_name,
                         'serial': device.serial,
