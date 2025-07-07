@@ -162,12 +162,6 @@ def dashboard():
 
 
 
-
-
-
-
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -268,15 +262,37 @@ def add_device():
 
 @app.route('/update/<int:device_id>', methods=['GET', 'POST'])
 def update_device(device_id):
-    device = Device.query.get(device_id)
+    device = Device.query.get_or_404(device_id)
+    
     if request.method == 'POST':
+        device.client_name = request.form['client_name']
+        device.client_phone = request.form['client_phone']
+        device.device_type = request.form['device_type']
+        device.serial = request.form['serial']
+        device.issue = request.form['issue']
+        device.inclusions = request.form['inclusions']
         device.status = request.form['status']
         device.cost = float(request.form['cost'])
         device.notes = request.form['notes']
         device.delivered_date = datetime.now().strftime("%Y-%m-%d")
+
         db.session.commit()
         return redirect('/')
+    
     return render_template('update_device.html', device=device)
+
+
+
+@app.route('/delete/<int:device_id>')
+def delete_device(device_id):
+    device = Device.query.get_or_404(device_id)
+    db.session.delete(device)
+    db.session.commit()
+    return redirect('/')
+
+
+
+
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():

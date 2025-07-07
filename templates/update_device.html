@@ -2,130 +2,79 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>تحديث حالة الجهاز</title>
+    <title>تعديل بيانات الجهاز</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Cairo', sans-serif;
-            background-color: #f7faff;
-            padding: 40px;
-            direction: rtl;
-            color: #333;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .header h2 {
-            color: #007acc;
-        }
-
-        h1 {
-            text-align: center;
-            color: #005f9e;
-            margin-bottom: 30px;
-        }
-
-        form {
-            background: #fff;
-            max-width: 600px;
-            margin: auto;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.05);
         }
-
-        form p {
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        label {
-            display: block;
-            margin: 15px 0 5px;
-            font-weight: bold;
-        }
-
-        select, input[type="number"], textarea {
+        input, textarea, select {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
+            margin: 10px 0;
             border-radius: 8px;
-            font-size: 15px;
+            border: 1px solid #ccc;
         }
-
-        textarea {
-            resize: vertical;
-        }
-
         button {
-            margin-top: 20px;
-            width: 100%;
             background-color: #007acc;
             color: white;
             border: none;
-            padding: 12px;
-            font-size: 16px;
+            padding: 10px 25px;
             border-radius: 8px;
             cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #005f9e;
-        }
-
-        a {
-            display: block;
-            text-align: center;
-            margin-top: 25px;
-            text-decoration: none;
-            color: #007acc;
-            font-weight: bold;
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 20px;
-            }
-
-            form {
-                padding: 20px;
-            }
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>MCT - الشركة المصرية للحاسبات والتكنولوجيا</h2>
-    </div>
+<h2>✏️ تعديل بيانات الجهاز</h2>
 
-    <h1>✏️ تحديث حالة الجهاز</h1>
+<form method="post">
+    <label>اسم العميل:
+        <input type="text" name="client_name" value="{{ device.client_name }}" required>
+    </label>
 
-    <form method="post">
-        <p><strong>العميل:</strong> {{ device.client_name }}</p>
-        <p><strong>الجهاز:</strong> {{ device.device_type }}</p>
-        <p><strong>السيريال:</strong> {{ device.serial }}</p>
+    <label>رقم الهاتف:
+        <input type="text" name="client_phone" value="{{ device.client_phone }}" required>
+    </label>
 
-        <label>الحالة:</label>
+    <label>نوع الجهاز:
+        <input type="text" name="device_type" value="{{ device.device_type }}" required>
+    </label>
+
+    <label>السيريال:
+        <input type="text" name="serial" value="{{ device.serial }}" required>
+    </label>
+
+    <label>وصف المشكلة:
+        <textarea name="issue">{{ device.issue }}</textarea>
+    </label>
+
+    <label>مشتملات:
+        <textarea name="inclusions">{{ device.inclusions }}</textarea>
+    </label>
+
+    <label>الحالة:
         <select name="status">
             <option value="قيد الإصلاح" {% if device.status == 'قيد الإصلاح' %}selected{% endif %}>قيد الإصلاح</option>
             <option value="تم الإصلاح" {% if device.status == 'تم الإصلاح' %}selected{% endif %}>تم الإصلاح</option>
             <option value="تم التسليم" {% if device.status == 'تم التسليم' %}selected{% endif %}>تم التسليم</option>
         </select>
+    </label>
 
-        <label>التكلفة:</label>
+    <label>التكلفة:
         <input type="number" name="cost" step="0.01" value="{{ device.cost }}">
+    </label>
 
-        <label>ملاحظات:</label>
+    <label>ملاحظات:
         <textarea name="notes">{{ device.notes }}</textarea>
+    </label>
 
-        <button type="submit">💾 تحديث</button>
-    </form>
+    <button type="submit">💾 حفظ التعديلات</button>
+</form>
 
-    <a href="/">⬅️ رجوع للصفحة الرئيسية</a>
+<a href="/">⬅️ رجوع</a>
 
 </body>
 </html>

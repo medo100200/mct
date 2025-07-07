@@ -151,6 +151,8 @@
                 <th>استلام</th>
                 <th>تسليم</th>
                 <th>تعديل</th>
+                <th>حذف</th>
+
             </tr>
         </thead>
         <tbody>
@@ -168,6 +170,8 @@
                 <td data-label="استلام">{{ device.received_date }}</td>
                 <td data-label="تسليم">{{ device.delivered_date or "-" }}</td>
                 <td data-label="تعديل"><a href="/update/{{ device.id }}">✏️</a></td>
+                <td><a href="/delete/{{ device.id }}" onclick="return confirm('هل أنت متأكد أنك تريد حذف هذا الجهاز؟')">🗑️</a></td>
+
             </tr>
             {% endfor %}
         </tbody>
